@@ -15,7 +15,7 @@
  * 部署 Worker 后，把下面这行改成你的 Worker 地址，例如：
  *   const WORKER = "https://campus-card-proxy.xxx.workers.dev";
  */
-const WORKER = "";
+const WORKER = "https://jerry-ai-roadmap.app.workbuddy.host";
 
 /* 演示模式用的假数据 */
 const DEMO = {
@@ -122,13 +122,13 @@ async function fetchData() {
   const token = localStorage.getItem(TOKEN_KEY);
 
   if (!WORKER) {
-    // 演示模式
+    // 演示模式（没有配置代理地址时）
     await new Promise((r) => setTimeout(r, 500));
     render({ ...DEMO, balance: DEMO.balance + (Math.random() * 2 - 1).toFixed(2) });
     return;
   }
 
-  const res = await fetch(`${WORKER}/api/account`, {
+  const res = await fetch(`${WORKER}/card-api/account`, {
     headers: { Authorization: "Bearer " + token },
   });
 
@@ -164,7 +164,7 @@ async function doLogin() {
       localStorage.setItem(TOKEN_KEY, "demo-token");
       localStorage.setItem(USER_KEY, username);
     } else {
-      const res = await fetch(`${WORKER}/api/login`, {
+      const res = await fetch(`${WORKER}/card-api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -218,7 +218,7 @@ $("refreshBtn").addEventListener("click", async () => {
 $("payBtn").addEventListener("click", (e) => {
   e.preventDefault();
   const url = WORKER
-    ? `${WORKER}/api/paycode`
+    ? `${WORKER}/card-api/paycode`
     : "https://yktwx2.huel.edu.cn/plat/shouyeUser";
   window.open(url, "_blank");
 });
