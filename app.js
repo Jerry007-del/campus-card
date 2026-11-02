@@ -74,52 +74,55 @@ function iconFor(title) {
 
 /* ═══════════ 渲染 ═══════════ */
 function render(data) {
-  $("balance").textContent = money(data.balance);
-
-  // 同步提示
+  // ── 档案 ──
+  const p = data.profile;
   const hint = $("syncHint");
   const now = new Date();
-  hint.className = "hint";
-  if (data.balance < 20) {
-    hint.classList.add(data.balance < 0 ? "late" : "warn");
-    hint.textContent = data.balance < 0 ? "余额已透支，尽快充值" : "余额偏低，建议尽快充值";
-  } else {
+
+  if (p) {
+    $("pName").textContent = p.name || "已绑定";
+    $("pGrid").hidden = false;
+    $("pSno").textContent = p.sno || "--";
+    $("pCollege").textContent = p.college || "--";
+    $("pClass").textContent = p.className || "--";
+    $("pYear").textContent = p.year || "--";
+    hint.className = "hint";
     hint.textContent = `更新于 ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`;
+  } else {
+    $("pName").textContent = "已绑定";
+    hint.className = "hint warn";
+    hint.textContent = "读取不到档案信息";
   }
 
-  // 最近消费
+  // ── 缴费记录 ──
   const list = $("recentList");
-  const logs = (data.logs || []).slice(0, 5);
-  if (!logs.length) {
-    list.innerHTML = '<div class="card empty">暂无消费记录</div>';
+  const recs = data.records || [];
+  if (!recs.length) {
+    list.innerHTML = '<div class="card empty">暂无缴费记录</div>';
   } else {
-    list.innerHTML = logs
+    list.innerHTML = recs
       .map(
-        (l) => `
+        (r) => `
       <div class="card item">
-        <div class="ic">${iconFor(l.title)}</div>
+        <div class="ic">¥</div>
         <div class="mid">
-          <b>${escapeHtml(l.title || "消费")}</b>
-          <span>${escapeHtml(l.time || "")} · ${escapeHtml(l.place || "")}</span>
+          <b>${escapeHtml(r.channel || "缴费")}</b>
+          <span>${escapeHtml(r.date || "")} · 单号 ${escapeHtml(r.orderNo || "")}</span>
         </div>
-        <div class="amt2 minus">-${money(l.amount)}</div>
+        <div class="amt2 minus">-${money(r.amount)}</div>
       </div>`
       )
       .join("");
   }
 
-  // 本月统计
-  const monthTotal = (data.logs || [])
-    .filter((l) => !/昨天|前天/.test(l.time || ""))
-    .reduce((s, l) => s + Number(l.amount || 0), 0);
-  $("monthAmt").textContent = "¥" + money(monthTotal);
+  // ── 统计 ──
+  const total = Number(data.total || 0);
+  $("monthAmt").textContent = "¥" + money(total);
+  $("dayAvg").textContent = recs.length + " 笔";
 
-  // 进度条：以 500 元为月度参考上限
-  const pct = Math.min(100, (monthTotal / 500) * 100);
+  // 进度条：以 20000 元为参考上限（覆盖一年学费）
+  const pct = Math.min(100, (total / 20000) * 100);
   requestAnimationFrame(() => ($("monthBar").style.width = pct + "%"));
-
-  const days = new Date().getDate();
-  $("dayAvg").textContent = "¥" + money(monthTotal / Math.max(1, days));
 }
 
 function escapeHtml(s) {
