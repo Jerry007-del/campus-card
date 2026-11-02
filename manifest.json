@@ -1,0 +1,27 @@
+{
+  "name": "财大校园卡",
+  "short_name": "校园卡",
+  "description": "河南财经政法大学校园卡余额、消费记录，一屏搞定",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070b1f",
+  "theme_color": "#070b1f",
+  "lang": "zh-CN",
+  "categories": ["finance", "utilities"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
