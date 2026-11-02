@@ -80,6 +80,12 @@ body::after{width:400px;height:400px;bottom:-160px;right:-130px;background:radia
 .balance .hint.warn{color:var(--amber)}
 .balance .hint.late{color:#fb7185}
 
+/* 档案网格 */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.pgrid div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pgrid span{font-size:11px;color:var(--dim)}
+.pgrid b{font-size:13px;color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 /* ── 付款码大按钮 ── */
 .paybtn{display:block;width:100%;margin-top:14px;padding:18px;border-radius:16px;border:1px solid rgba(245,158,11,.35);
   background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(245,158,11,.07));
@@ -159,10 +165,17 @@ body::after{width:400px;height:400px;bottom:-160px;right:-130px;background:radia
 
   <!-- 主界面 -->
   <div id="mainView" class="hidden">
-    <div class="card balance">
-      <div class="label">卡 余 额</div>
-      <div class="amt"><small>¥</small><span id="balance">--.--</span></div>
+    <!-- 档案卡 -->
+    <div class="card balance profile-card">
+      <div class="label">校 园 账 户</div>
+      <div class="amt" style="font-size:30px" id="pName">--</div>
       <div class="hint" id="syncHint">正在同步…</div>
+      <div class="pgrid" id="pGrid" hidden>
+        <div><span>学号</span><b id="pSno">--</b></div>
+        <div><span>学院</span><b id="pCollege">--</b></div>
+        <div><span>班级</span><b id="pClass">--</b></div>
+        <div><span>入学年份</span><b id="pYear">--</b></div>
+      </div>
     </div>
 
     <a class="paybtn" id="payBtn" target="_blank" rel="noopener">
@@ -170,21 +183,21 @@ body::after{width:400px;height:400px;bottom:-160px;right:-130px;background:radia
     </a>
 
     <div class="sec">
-      <h3><span>最近消费</span><a id="allBill" href="#">全部账单 ›</a></h3>
+      <h3><span>缴费记录</span><a id="allBill" href="#">学校平台 ›</a></h3>
       <div id="recentList"></div>
     </div>
 
     <div class="sec">
-      <h3><span>本月消费</span></h3>
+      <h3><span>缴费统计</span></h3>
       <div class="card stats">
         <div class="row">
-          <span class="k">本月合计</span>
+          <span class="k">累计已缴</span>
           <span class="v" id="monthAmt">¥0.00</span>
         </div>
         <div class="bar"><i id="monthBar"></i></div>
         <div class="row" style="margin:12px 0 0">
-          <span class="k">日均</span>
-          <span class="k" id="dayAvg">¥0.00</span>
+          <span class="k">笔数</span>
+          <span class="k" id="dayAvg">0 笔</span>
         </div>
       </div>
     </div>
