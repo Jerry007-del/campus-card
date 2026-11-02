@@ -202,6 +202,21 @@ function showMain() {
 }
 
 /* ═══════════ 事件 ═══════════ */
+// ---- 登录方式：学号 / 身份证 ----
+let loginType = "snoNew";
+
+document.querySelectorAll("#loginType .seg-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#loginType .seg-btn").forEach((b) => b.classList.remove("on"));
+    btn.classList.add("on");
+    loginType = btn.dataset.type;
+    const u = $("userInput");
+    u.placeholder = loginType === "idCard" ? "请输入身份证号" : "请输入学号";
+    u.inputMode = loginType === "idCard" ? "text" : "numeric";
+    u.value = "";
+  });
+});
+
 $("loginBtn").addEventListener("click", doLogin);
 $("refreshBtn").addEventListener("click", async () => {
   $("refreshBtn").textContent = "…";
