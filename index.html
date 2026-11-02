@@ -139,15 +139,15 @@ body::after{width:400px;height:400px;bottom:-160px;right:-130px;background:radia
     <div class="field">
       <label>学号 / 身份证号</label>
       <div class="seg" id="loginType">
-      <button class="seg-btn on" data-type="snoNew">学号登录</button>
-      <button class="seg-btn" data-type="idCard">身份证登录</button>
+      <button class="seg-btn on" data-type="sno">学号登录</button>
+      <button class="seg-btn" data-type="id">身份证登录</button>
     </div>
     <input id="userInput" type="text" inputmode="numeric" autocomplete="username" placeholder="请输入学号">
     </div>
     <div class="field">
       <label>查询密码</label>
       <input id="passInput" type="password" autocomplete="current-password" placeholder="查询密码（初始为身份证后 6 位）">
-    <div class="pw-hint">查密码 ≠ 消费密码。绑定/登录用的是<b>查询密码</b>。若你已改过密码，请用改后的那个。</div>
+    <div class="pw-hint">这里要的是<b>查询密码</b>（不是消费密码）。初始是身份证后 6 位；末位为 <b>X</b> 的取 X 前 6 位数字。若你在公众号里改过密码，请用改后的那个。</div>
     </div>
     <button class="btn" id="loginBtn">绑定</button>
     <div class="tip">
