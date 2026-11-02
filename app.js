@@ -254,12 +254,42 @@ $("refreshBtn").addEventListener("click", async () => {
 });
 
 // 付款码：跳转到学校一卡通付款码页
+/* 付款码：弹层内嵌学校一卡通官方付款码页
+   之前 window.open 打开的是后端 JSON 接口，所以看到一堆 JSON 而不是二维码。
+   现在：弹层 + iframe 加载一卡通 H5 的 /#/pay 路由。
+   用户在 iframe 登录一次后 cookie 保留，之后点开直接出码。 */
+const PAY_URL = "https://yktwx2.huel.edu.cn/plat/index.html#/pay";
+const payMask = $("payMask");
+const payFrame = $("payFrame");
+const payClose = $("payClose");
+const payOpen = $("payOpen");
+let payLoaded = false;
+
+function openPay() {
+  payMask.hidden = false;
+  document.body.style.overflow = "hidden";
+  if (!payLoaded) {
+    payFrame.src = PAY_URL;
+    payLoaded = true;
+  }
+  payOpen.href = PAY_URL;
+}
+
+function closePay() {
+  payMask.hidden = true;
+  document.body.style.overflow = "";
+}
+
 $("payBtn").addEventListener("click", (e) => {
   e.preventDefault();
-  const url = WORKER
-    ? `${WORKER}/card-api/paycode`
-    : "https://yktwx2.huel.edu.cn/plat/shouyeUser";
-  window.open(url, "_blank");
+  openPay();
+});
+payClose.addEventListener("click", closePay);
+payMask.addEventListener("click", (e) => {
+  if (e.target === payMask) closePay();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !payMask.hidden) closePay();
 });
 
 /* ═══════════ 启动 ═══════════ */
