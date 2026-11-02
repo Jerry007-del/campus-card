@@ -292,6 +292,34 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !payMask.hidden) closePay();
 });
 
+/* ═══════════ 版本自检 ═══════════
+   防止「服务端已经更新，但浏览器还在用缓存里的旧版」。
+   做法：index.html 里带 build 号，app.js 读本地记录的号，
+        不一致就清掉所有缓存并强制刷新一次。            */
+const BUILD = (document.querySelector('meta[name="build"]') || {}).content || "v3";
+(function checkBuild() {
+  try {
+    const seen = localStorage.getItem("hzue_card_build");
+    if (seen && seen !== BUILD) {
+      // 版本变了 → 清缓存 + 卸载旧 SW → 强制刷新
+      localStorage.setItem("hzue_card_build", BUILD);
+      if (window.caches && caches.keys) {
+        caches.keys().then((ks) => Promise.all(ks.map((k) => caches.delete(k))));
+      }
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+        navigator.serviceWorker.getRegistrations().then((rs) =>
+          rs.forEach((r) => r.unregister())
+        );
+      }
+      location.reload();
+      return;
+    }
+    localStorage.setItem("hzue_card_build", BUILD);
+  } catch (e) {
+    /* localStorage 不可用就算了，不影响主流程 */
+  }
+})();
+
 /* ═══════════ 启动 ═══════════ */
 (function init() {
   const token = localStorage.getItem(TOKEN_KEY);
