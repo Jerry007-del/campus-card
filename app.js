@@ -258,7 +258,7 @@ $("refreshBtn").addEventListener("click", async () => {
    之前 window.open 打开的是后端 JSON 接口，所以看到一堆 JSON 而不是二维码。
    现在：弹层 + iframe 加载一卡通 H5 的 /#/pay 路由。
    用户在 iframe 登录一次后 cookie 保留，之后点开直接出码。 */
-const PAY_URL = "https://yktwx2.huel.edu.cn/plat/index.html#/pay";
+const PAY_URL = "https://yktwx2.huel.edu.cn/plat/shouyeUser#/pay";
 const payMask = $("payMask");
 const payFrame = $("payFrame");
 const payClose = $("payClose");
