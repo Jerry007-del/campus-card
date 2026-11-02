@@ -34,6 +34,17 @@ const DEMO = {
 /* ═══════════ 工具 ═══════════ */
 const $ = (id) => document.getElementById(id);
 const TOKEN_KEY = "hzue_card_token";
+
+// ★ 会话 ID：用于服务端识别「你是谁」
+//   cwcsf 是 ASP.NET 会话（cookie），所以每次绑定生成一个随机 id，
+//   之后所有请求都带上它，服务端就能对上你的会话。
+const SESSION_ID =
+  localStorage.getItem("hzue_card_sid") ||
+  (() => {
+    const id = "s" + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+    localStorage.setItem("hzue_card_sid", id);
+    return id;
+  })();
 const USER_KEY = "hzue_card_user";
 
 function toast(msg, ms = 2200) {
@@ -128,9 +139,12 @@ async function fetchData() {
     return;
   }
 
-  const res = await fetch(`${WORKER}/card-api/account`, {
-    headers: { Authorization: "Bearer " + token },
-  });
+  // ★ cwcsf 用的是「服务端会话 cookie」而不是 token，
+  //   所以只要带上 sessionId，服务端就知道你是谁。
+  const res = await fetch(
+    `${WORKER}/card-api/account?sid=${encodeURIComponent(SESSION_ID)}`,
+    { headers: { Authorization: "Bearer " + token } }
+  );
 
   if (res.status === 401) {
     localStorage.removeItem(TOKEN_KEY);
@@ -167,13 +181,19 @@ async function doLogin() {
       const res = await fetch(`${WORKER}/card-api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({
+          username,
+          password,
+          ltyp: loginType,          // id = 证件号 / sno = 学号
+          sessionId: SESSION_ID,    // ★ 会话隔离：服务端按这个认人
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        throw new Error(data.msg || data.error || "绑定失败，请检查学号和密码");
+        throw new Error(data.error || data.msg || "绑定失败，请检查学号和密码");
       }
-      localStorage.setItem(TOKEN_KEY, data.token);
+      // ★ 不存 token —— cwcsf 是服务端会话，用 SESSION_ID 标识
+      localStorage.setItem(TOKEN_KEY, "session:" + SESSION_ID);
       localStorage.setItem(USER_KEY, username);
     }
 
@@ -203,7 +223,8 @@ function showMain() {
 
 /* ═══════════ 事件 ═══════════ */
 // ---- 登录方式：学号 / 身份证 ----
-let loginType = "snoNew";
+// ★ cwcsf 的 ltyp：id = 证件号 / sno = 学号
+let loginType = "sno";
 
 document.querySelectorAll("#loginType .seg-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -211,8 +232,8 @@ document.querySelectorAll("#loginType .seg-btn").forEach((btn) => {
     btn.classList.add("on");
     loginType = btn.dataset.type;
     const u = $("userInput");
-    u.placeholder = loginType === "idCard" ? "请输入身份证号" : "请输入学号";
-    u.inputMode = loginType === "idCard" ? "text" : "numeric";
+    u.placeholder = loginType === "id" ? "请输入身份证号" : "请输入学号";
+    u.inputMode = loginType === "id" ? "text" : "numeric";
     u.value = "";
   });
 });
