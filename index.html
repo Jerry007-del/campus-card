@@ -119,6 +119,27 @@ body::after{width:400px;height:400px;bottom:-160px;right:-130px;background:radia
 
 /* ── 状态 ── */
 .empty{text-align:center;padding:26px 16px;color:var(--dim);font-size:13px}
+/* 付款码弹层 */
+.mask{position:fixed;inset:0;background:rgba(3,7,18,.82);backdrop-filter:blur(8px);
+  z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.mask[hidden]{display:none}
+.sheet{width:100%;max-width:480px;height:88vh;background:var(--card);border:1px solid var(--line);
+  border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden;
+  animation:slideUp .28s ease-out}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;
+  border-bottom:1px solid var(--line);flex:0 0 auto}
+.sheet-head b{font-size:15px;color:var(--text)}
+.sheet-head button{background:none;border:none;color:var(--dim);font-size:26px;line-height:1;
+  cursor:pointer;padding:0 4px}
+.sheet-head button:hover{color:var(--text)}
+.sheet-frame{flex:1;min-height:0;background:#0b1020}
+.sheet-frame iframe{width:100%;height:100%;border:0;display:block}
+.sheet-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 16px;border-top:1px solid var(--line);flex:0 0 auto}
+.sheet-foot span{font-size:11.5px;color:var(--dim);line-height:1.5;flex:1}
+.sheet-foot a{font-size:12.5px;color:var(--cyan);text-decoration:none;white-space:nowrap;font-weight:600}
+
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
   background:rgba(12,17,34,.96);border:1px solid var(--line);border-radius:12px;padding:11px 18px;
   font-size:13.5px;opacity:0;pointer-events:none;transition:.3s;z-index:99;max-width:88vw;text-align:center}
@@ -178,7 +199,7 @@ body::after{width:400px;height:400px;bottom:-160px;right:-130px;background:radia
       </div>
     </div>
 
-    <a class="paybtn" id="payBtn" target="_blank" rel="noopener">
+    <a class="paybtn" id="payBtn" href="#">
       <span class="qr"></span> 出示付款码
     </a>
 
@@ -203,6 +224,26 @@ body::after{width:400px;height:400px;bottom:-160px;right:-130px;background:radia
     </div>
   </div>
 
+</div>
+
+<!-- 付款码弹层：内嵌学校一卡通官方付款码页 -->
+<div class="mask" id="payMask" hidden>
+  <div class="sheet">
+    <div class="sheet-head">
+      <b>出示付款码</b>
+      <button id="payClose" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="sheet-frame">
+      <iframe id="payFrame" title="学校一卡通付款码"
+        src="about:blank"
+        referrerpolicy="no-referrer-when-downgrade"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    </div>
+    <div class="sheet-foot">
+      <span id="payTip">首次使用请在下方登录一次一卡通，登录后本页面会一直保留付款码</span>
+      <a id="payOpen" target="_blank" rel="noopener">新窗口打开 ›</a>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
